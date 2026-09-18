@@ -99,7 +99,7 @@ ${event.payload ?? ""}`;
               <b className="text-right font-mono text-soc-hostile">+{event.score}</b>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              {hints.length ? (
+              {hints?.length ? (
                 hints.map((pattern) => (
                   <span key={pattern} className="rounded border border-soc-border px-2 py-1 font-mono text-xs text-soc-suspicious">
                     {pattern}

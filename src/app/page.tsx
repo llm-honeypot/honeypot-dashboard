@@ -77,25 +77,47 @@ export default function LandingPage() {
   ];
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setAuthError('');
+   e.preventDefault();
+   setIsLoading(true);
+   setAuthError('');
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      if (!customerId.trim() || !password.trim()) {
+   try {
+     if (!customerId.trim() || !password.trim()) {
         setAuthError('Please enter a valid Customer ID and Password.');
-        setIsLoading(false);
         return;
       }
 
-      router.push('/dashboard');
-    } catch {
-      setAuthError('Authentication service temporarily unavailable. Please retry.');
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+        {
+          method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+            customer_id: customerId.trim(),
+            password,
+          }),
+        }
+     );
+
+     const data = await response.json();
+
+     if (!response.ok) {
+       setAuthError(data.error || 'Invalid credentials.');
+       return;
+     }
+
+     if (data.token) {
+        localStorage.setItem('vb_token', data.token);
+      }
+
+     router.push('/dashboard');
+   } catch {
+     setAuthError('Authentication service unavailable. Please retry.');
     } finally {
-      setIsLoading(false);
-    }
+     setIsLoading(false);
+   }
   };
 
   const landingFaqs = [
